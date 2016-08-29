@@ -209,6 +209,14 @@ class EntityReferenceHandlersTestCase extends DrupalWebTestCase {
         'target_type' => 'user',
         'handler_settings' => array(
           'target_bundles' => array(),
+          'referenceable_roles' => array(
+            2 => '2',
+            3 => '3',
+          ),
+          'referenceable_status' => array(
+            'active' => 'active',
+            'blocked' => 0,
+          ),
         ),
       ),
       'field_name' => 'test_field',
@@ -235,6 +243,9 @@ class EntityReferenceHandlersTestCase extends DrupalWebTestCase {
         'status' => 0,
       ),
     );
+
+    $field2 = $field;
+    $field2['settings']['handler_settings']['referenceable_status']['blocked'] = 'blocked';
 
     // The label of the anonymous user is variable_get('anonymous').
     $users['anonymous']->name = variable_get('anonymous', t('Anonymous'));
@@ -324,7 +335,7 @@ class EntityReferenceHandlersTestCase extends DrupalWebTestCase {
         ),
       ),
     );
-    $this->assertReferencable($field, $referencable_tests, 'User handler (admin)');
+    $this->assertReferencable($field2, $referencable_tests, 'User handler (admin)');
   }
 
   /**
