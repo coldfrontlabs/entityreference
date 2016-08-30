@@ -1097,6 +1097,7 @@ function entityreference_field_formatter_info() {
         'view_mode' => 'default',
         'links' => TRUE,
         'use_content_language' => TRUE,
+        'hide_title' => FALSE,
       ),
     ),
   );
@@ -1141,6 +1142,12 @@ function entityreference_field_formatter_settings_form($field, $instance, $view_
       '#default_value' => $settings['links'],
     );
 
+    $element['hide_title'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Hide title'),
+      '#default_value' => $settings['hide_title'],
+    );
+
     $element['use_content_language'] = array(
       '#type' => 'checkbox',
       '#title' => t('Use current content language'),
@@ -1173,6 +1180,7 @@ function entityreference_field_formatter_settings_summary($field, $instance, $vi
     $summary[] = t('Rendered as @mode', array('@mode' => $view_mode_label));
     $summary[] = !empty($settings['links']) ? t('Display links') : t('Do not display links');
     $summary[] = !empty($settings['use_content_language']) ? t('Use current content language') : t('Use field language');
+    $summary[] = !empty($settings['hide_title']) ? t('Hide Title') : t('Show Title');
   }
 
   return implode('<br />', $summary);
@@ -1281,7 +1289,7 @@ function entityreference_field_formatter_view($entity_type, $entity, $field, $in
 
         $target_entity = clone $item['entity'];
         unset($target_entity->content);
-        $result[$delta] = entity_view($field['settings']['target_type'], array($item['target_id'] => $target_entity), $settings['view_mode'], $target_langcode, FALSE);
+        $result[$delta] = entity_view($field['settings']['target_type'], array($item['target_id'] => $target_entity), $settings['view_mode'], $target_langcode, !empty($settings['hide_title']));
 
         if (empty($settings['links']) && isset($result[$delta][$field['settings']['target_type']][$item['target_id']]['links'])) {
           $result[$delta][$field['settings']['target_type']][$item['target_id']]['links']['#access'] = FALSE;
